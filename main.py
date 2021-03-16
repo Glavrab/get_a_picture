@@ -22,10 +22,11 @@ async def get_picture(num: int) -> None:
             list_of_attr = html_doc.find_all(src=True)
             for attr in list_of_attr:
                 unparsed_url_for_picture = attr.get('data-src')
-                url_for_picture = 'https://pixabay.com/get/' + unparsed_url_for_picture[30:-2]
+                image_name = unparsed_url_for_picture[30:-2]
+                url_for_picture = 'https://pixabay.com/get/' + image_name
                 async with session.get(url_for_picture) as response_picture:
                     picture = await response_picture.content.read()
-                    filename = unparsed_url_for_picture[30:-2]
+                    filename = image_name
                     with open(filename, 'xb') as new_picture:
                         new_picture.write(picture)
     await session.close()

@@ -11,7 +11,7 @@ async def get_picture(num: int) -> None:
     session = ClientSession()
     async with session.get(URL) as response:
         html_doc = await response.text()
-        parsed_html_doc = BeautifulSoup(html_doc, 'html.parser')
+        parsed_html_doc = BeautifulSoup(html_doc, 'lxml')
         str_with_token = parsed_html_doc.find(value=True, type='hidden')
         token = str(str_with_token)[42:82]
         data = {'_token': token}

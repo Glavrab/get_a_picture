@@ -9,3 +9,4 @@ yarl==1.6.3
 beautifulsoup4==4.9.3
 bs4==0.0.1
 soupsieve==2.2
+lxml==4.6.2

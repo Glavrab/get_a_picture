@@ -17,16 +17,16 @@ async def get_picture(num: int) -> None:
         data = {'_token': token}
         for i in range(num):
             response = await session.post(URL, data=data)
-            unparsed_response = await response.json()
-            html_doc = BeautifulSoup(unparsed_response['output'], 'html.parser')
+            unparsed_response = await response.text()
+            html_doc = BeautifulSoup(unparsed_response[27:-2], 'lxml')
+            print(html_doc)
             list_of_attr = html_doc.find_all(src=True)
             for attr in list_of_attr:
-                url_for_picture = attr.get('data-src')
+                unparsed_url_for_picture = attr.get('data-src')
+                url_for_picture = 'https://pixabay.com/get/' + unparsed_url_for_picture[30:-2]
                 async with session.get(url_for_picture) as response_picture:
-                    picture = response_picture.content.read()
-                    filename = url_for_picture[24:-2] + 'jpg'
-                    with open(filename, 'w'):
-                        filename.write(picture)
+                    picture = await response_picture.content.read()
+                    filename = unparsed_url_for_picture[30:-2]
+                    with open(filename, 'xb') as new_picture:
+                        new_picture.write(picture)
     await session.close()
-
-

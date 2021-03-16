@@ -19,7 +19,6 @@ async def get_picture(num: int) -> None:
             response = await session.post(URL, data=data)
             unparsed_response = await response.text()
             html_doc = BeautifulSoup(unparsed_response[27:-2], 'lxml')
-            print(html_doc)
             list_of_attr = html_doc.find_all(src=True)
             for attr in list_of_attr:
                 unparsed_url_for_picture = attr.get('data-src')

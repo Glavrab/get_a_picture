@@ -29,3 +29,11 @@ async def get_picture(num: int) -> None:
                     with open(filename, 'xb') as new_picture:
                         new_picture.write(picture)
     await session.close()
+
+
+if __name__ == '__main__':
+    pictures_to_download = int(input('How many pictures do you want?'))
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(get_picture(pictures_to_download))
+    loop.run_until_complete(asyncio.sleep(0))
+    loop.close()

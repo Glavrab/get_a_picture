@@ -15,35 +15,40 @@ def html_parser(data: str, object_to_find: str, **search_args) -> str:
         return info
 
 
-async def get_token(num) -> None:
+async def get_token() -> tuple:
     """Get a token from the website"""
     session = ClientSession()
     response = await session.get(URL)
     html_doc = await response.text()
     token = html_parser(data=html_doc, object_to_find='value', type='hidden')
-    await get_picture(num=num, token=token, session=session)
+    return token, session
 
 
-async def get_picture(num, token, session) -> None:
+async def get_picture(token, session) -> None:
     """Get a picture from the website"""
     data = {'_token': token}
+    response = await session.post(URL, data=data)
+    unparsed_response = await response.text()
+    unparsed_url_for_picture = html_parser(data=unparsed_response[27:-2], object_to_find='data-src', src=True)
+    image_name = unparsed_url_for_picture[30:-2]
+    url_for_picture = 'https://pixabay.com/get/' + image_name
+    async with session.get(url_for_picture) as response_picture:
+        picture = await response_picture.content.read()
+        filename = image_name
+        with open(filename, 'xb') as new_picture:
+            new_picture.write(picture)
+
+
+async def main(num):
+    """Create tasks to work with"""
+    tasks = []
+    token, session = await get_token()
     for i in range(num):
-        response = await session.post(URL, data=data)
-        unparsed_response = await response.text()
-        unparsed_url_for_picture = html_parser(data=unparsed_response[27:-2], object_to_find='data-src', src=True)
-        image_name = unparsed_url_for_picture[30:-2]
-        url_for_picture = 'https://pixabay.com/get/' + image_name
-        async with session.get(url_for_picture) as response_picture:
-            picture = await response_picture.content.read()
-            filename = image_name
-            with open(filename, 'xb') as new_picture:
-                new_picture.write(picture)
+        tasks.append(get_picture(token, session))
+    await asyncio.gather(*tasks)
     await session.close()
 
 
 if __name__ == '__main__':
-    pictures_to_download = int(input('How many pictures do you want?'))
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(get_token(pictures_to_download))
-    loop.run_until_complete(asyncio.sleep(0))
-    loop.close()
+    pictures_to_download = input('How many pictures do you want?')
+    asyncio.run(main(int(pictures_to_download)))

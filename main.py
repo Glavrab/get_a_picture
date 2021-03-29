@@ -24,7 +24,7 @@ async def get_token() -> tuple:
     return token, session
 
 
-async def get_picture(token, session) -> None:
+async def get_picture(token: str, session: ClientSession) -> None:
     """Get a picture from the website"""
     data = {'_token': token}
     response = await session.post(URL, data=data)
@@ -39,7 +39,7 @@ async def get_picture(token, session) -> None:
             new_picture.write(picture)
 
 
-async def main(num):
+async def main(num: int) -> None:
     """Create tasks to work with"""
     tasks = []
     token, session = await get_token()

@@ -15,13 +15,12 @@ def html_parser(data: str, object_to_find: str, **search_args) -> str:
         return info
 
 
-async def get_token() -> tuple:
+async def get_token(session: ClientSession) -> str:
     """Get a token from the website."""
-    session = ClientSession()
     response = await session.get(URL)
     html_doc = await response.text()
     token = html_parser(data=html_doc, object_to_find='value', type='hidden')
-    return token, session
+    return token
 
 
 async def get_picture(token: str, session: ClientSession) -> None:
@@ -41,8 +40,9 @@ async def get_picture(token: str, session: ClientSession) -> None:
 
 async def main(num: int) -> None:
     """Create tasks to work with."""
+    session = ClientSession()
     tasks = []
-    token, session = await get_token()
+    token = await get_token(session)
     for i in range(num):
         tasks.append(get_picture(token, session))
     await asyncio.gather(*tasks)

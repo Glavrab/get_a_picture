@@ -50,5 +50,5 @@ async def main(num: int) -> None:
 
 
 if __name__ == '__main__':
-    pictures_to_download = input('How many pictures do you want?')
-    asyncio.run(main(int(pictures_to_download)))
+    pictures_to_download = int(input('How many pictures do you want?'))
+    asyncio.run(main(pictures_to_download))

@@ -7,7 +7,7 @@ URL = 'https://www.generatormix.com/random-image-generator'
 
 
 def html_parser(data: str, object_to_find: str, **search_args) -> str:
-    """Parse html page to look for object"""
+    """Parse html page to look for object."""
     parsed_html_doc = BeautifulSoup(data, 'lxml')
     searched_str = parsed_html_doc.find_all(attrs=search_args)
     for attr in searched_str:
@@ -16,7 +16,7 @@ def html_parser(data: str, object_to_find: str, **search_args) -> str:
 
 
 async def get_token() -> tuple:
-    """Get a token from the website"""
+    """Get a token from the website."""
     session = ClientSession()
     response = await session.get(URL)
     html_doc = await response.text()
@@ -25,7 +25,7 @@ async def get_token() -> tuple:
 
 
 async def get_picture(token: str, session: ClientSession) -> None:
-    """Get a picture from the website"""
+    """Get a picture from the website."""
     data = {'_token': token}
     response = await session.post(URL, data=data)
     unparsed_response = await response.text()
@@ -40,7 +40,7 @@ async def get_picture(token: str, session: ClientSession) -> None:
 
 
 async def main(num: int) -> None:
-    """Create tasks to work with"""
+    """Create tasks to work with."""
     tasks = []
     token, session = await get_token()
     for i in range(num):
